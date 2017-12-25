@@ -6,7 +6,7 @@ name := "sirmata-core"
 
 organization := "io.sirmata"
 
-crossScalaVersions := Seq("2.12.3")
+crossScalaVersions := Seq("2.12.4")
 
 scalaVersion := { crossScalaVersions.value.head }
 
@@ -42,31 +42,33 @@ resolvers ++= Seq(Resolver.jcenterRepo)
 
 // ··· Project Dependancies ···
 
-val akkaV             = "2.5.4"
-val akkaSerialStreamV = "4.1.1"
-val enumeratumV       = "1.5.12"
+val akkaV             = "2.5.8"
+val akkaSerialStreamV = "4.1.2"
 val configsV          = "0.4.4"
+val scodecV           = "1.10.3"
 val slf4JV            = "1.7.25"
 val logbackV          = "1.2.3"
+val catsV             = "1.0.0-RC2"
 val scalatestV        = "3.0.4"
 val scalacticV        = "3.0.4"
 
 libraryDependencies ++= Seq(
   // --- Akka --
-  "com.typesafe.akka"             %% "akka-actor"                         % akkaV             %  "provided",
-  "com.typesafe.akka"             %% "akka-slf4j"                         % akkaV             %  "provided",
-  "com.typesafe.akka"             %% "akka-stream"                        % akkaV             %  "provided",
+  "com.typesafe.akka"             %% "akka-actor"                         % akkaV             %  Provided,
+  "com.typesafe.akka"             %% "akka-slf4j"                         % akkaV             %  Provided,
+  "com.typesafe.akka"             %% "akka-stream"                        % akkaV             %  Provided,
   // --- Serial ---
   "ch.jodersky"                   %  "akka-serial-native"                 % akkaSerialStreamV % "runtime",
   "ch.jodersky"                   %% "akka-serial-stream"                 % akkaSerialStreamV,
   // --- Utils ---
-  "com.beachape"                  %% "enumeratum"                         % enumeratumV,
+  "org.scodec"                    %% "scodec-core"                        % scodecV,
   "com.github.kxbmap"             %% "configs"                            % configsV,  
   // --- Logger ---
   "org.slf4j"                     %  "slf4j-api"                          % slf4JV,
-  "ch.qos.logback"                %  "logback-classic"                    % logbackV          %  "test",
+  "ch.qos.logback"                %  "logback-classic"                    % logbackV          %  Test,
   // --- Testing ---
-  "com.typesafe.akka"             %% "akka-stream-testkit"                % akkaV             %  "test",
-  "org.scalatest"                 %% "scalatest"                          % scalatestV        %  "test",
-  "org.scalactic"                 %% "scalactic"                          % scalacticV        %  "test"
+  "org.typelevel"                 %% "cats-core"                          % catsV             %  Test,
+  "com.typesafe.akka"             %% "akka-stream-testkit"                % akkaV             %  Test,
+  "org.scalatest"                 %% "scalatest"                          % scalatestV        %  Test,
+  "org.scalactic"                 %% "scalactic"                          % scalacticV        %  Test
 )

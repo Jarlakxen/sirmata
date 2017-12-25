@@ -3,7 +3,7 @@ package io.sirmata
 object utils {
 
   object ArduinoUno {
-    val board = Board {
+    val board = BoardLayout {
       List(
         SerialPin(0),
         SerialPin(1),

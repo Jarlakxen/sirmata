@@ -18,14 +18,31 @@ class RequestSerializerStage extends GraphStage[FlowShape[CommandRequest, ByteSt
 
   override def createLogic(attr: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) {
+      override def preStart(): Unit = {
+        setKeepGoing(true)
+      }
       setHandler(in, new InHandler {
         override def onPush() {
-          push(out, toBytes(grab(in)))
+          val cmd = grab(in)
+          log.trace(s"Serializing $cmd")
+          push(out, toBytes(cmd))
+        }
+        override def onUpstreamFinish(): Unit = {
+          log.warn("RequestSerializerStage.in Finish")
+          super.onUpstreamFinish()
+        }
+        override def onUpstreamFailure(ex: Throwable): Unit = {
+          log.error("RequestSerializerStage.in failed", ex)
+          super.onUpstreamFailure(ex)
         }
       })
       setHandler(out, new OutHandler {
         override def onPull(): Unit = {
           pull(in)
+        }
+        override def onDownstreamFinish(): Unit = {
+          log.warn("RequestSerializerStage.out Finish")
+          super.onDownstreamFinish()
         }
       })
     }
@@ -42,41 +59,5 @@ class RequestSerializerStage extends GraphStage[FlowShape[CommandRequest, ByteSt
 object RequestSerializerStage {
 
   def apply(): GraphStage[FlowShape[CommandRequest, ByteString]] = new RequestSerializerStage()
-
-}
-
-class RequestSerializerStage2 extends GraphStage[FlowShape[(Firmata.Context, CommandRequest), (Firmata.Context, ByteString)]] with SLF4JLogging {
-
-  val in = Inlet[(Firmata.Context, CommandRequest)]("RequestSerializerStage.in")
-  val out = Outlet[(Firmata.Context, ByteString)]("RequestSerializerStage.out")
-
-  override val shape = FlowShape.of(in, out)
-
-  override def createLogic(attr: Attributes): GraphStageLogic =
-    new GraphStageLogic(shape) {
-      setHandler(in, new InHandler {
-        override def onPush() {
-          val (ctx, cmd) = grab(in)
-          push(out, toBytes(ctx, cmd))
-        }
-      })
-      setHandler(out, new OutHandler {
-        override def onPull(): Unit = {
-          pull(in)
-        }
-      })
-    }
-
-  def toBytes(implicit ctx: Firmata.Context, cmd: CommandRequest): (Firmata.Context, ByteString) = {
-    val bytes = cmd.toByteString
-    log.debug("Sending bytes: " + bytes.map(b => "0x" + b.toHexString.toUpperCase).mkString(", "))
-    (ctx, bytes)
-  }
-
-}
-
-object RequestSerializerStage2 {
-
-  def apply(): RequestSerializerStage2 = new RequestSerializerStage2()
 
 }

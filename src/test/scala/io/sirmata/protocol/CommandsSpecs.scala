@@ -15,21 +15,21 @@ class CommandsSpecs extends Spec {
 
   "Commands specification" should "serializer RequestFirmware" in {
 
-    RequestFirmware().toBytes shouldBe List(
+    RequestFirmware.toBytes shouldBe List(
       Tokens.StartSysSex,
       Tokens.ReportFirmware,
       Tokens.EndSysSex)
   }
 
   it should "serializer RequestCapability" in {
-    RequestCapability().toBytes shouldBe List(
+    RequestCapability.toBytes shouldBe List(
       Tokens.StartSysSex,
       Tokens.CapabilityQuery,
       Tokens.EndSysSex)
   }
 
   it should "serializer  RequestAnalogMapping" in {
-    RequestAnalogMapping().toBytes shouldBe List(
+    RequestAnalogMapping.toBytes shouldBe List(
       Tokens.StartSysSex,
       Tokens.AnalogMappingQuery,
       Tokens.EndSysSex)
@@ -45,10 +45,10 @@ class CommandsSpecs extends Spec {
   }
 
   it should "serializer SetPinMode" in {
-    SetPinMode(10, PinMode.Input).toBytes shouldBe List(
+    SetPinMode(10, PinMode.DigitalInput).toBytes shouldBe List(
       Tokens.SetPinMode,
       10.toByte,
-      PinMode.Input.toByte)
+      PinMode.DigitalInput.toByte)
   }
 
   it should "deserializer ProtocolVersion" in {
@@ -77,25 +77,25 @@ class CommandsSpecs extends Spec {
       0xA, 0x7F, 0x0, 0x1, 0x1, 0x1, 0x2, 0xA, 0x7F, 0x0, 0x1, 0x1, 0x1, 0x2, 0xA, 0x7F, 0x0, 0x1, 0x1, 0x1, 0x2, 0xA, 0x7F, 0x0,
       0x1, 0x1, 0x1, 0x2, 0xA, 0x6, 0x1, 0x7F, 0x0, 0x1, 0x1, 0x1, 0x2, 0xA, 0x6, 0x1, 0xF7)
 
-    inputCmd.toCommandResponse shouldBe Some(CapabilityResponse(List(
-      List((Input, 1), (Output, 1), (Analog, 10), (I2C, 1)),
-      List((Input, 1), (Output, 1), (Analog, 10), (I2C, 1)),
-      List((Input, 1), (Output, 1), (Analog, 10)),
-      List((Input, 1), (Output, 1), (Analog, 10)),
-      List((Input, 1), (Output, 1), (Analog, 10)),
-      List((Input, 1), (Output, 1), (Analog, 10)),
-      List((Input, 1), (Output, 1), (Servo, 14)),
-      List((Input, 1), (Output, 1), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (Servo, 14)),
-      List((Input, 1), (Output, 1), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (Servo, 14)),
-      List((Input, 1), (Output, 1), (PWM, 8), (Servo, 14)),
-      List((Input, 1), (Output, 1), (Servo, 14))).reverse))
+    inputCmd.toCommandResponse shouldBe Some(CapabilityResponse(
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(PWM, 8), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(Servo, 14))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10), PinCapability(I2C, 1))),
+      PinCapabilities(Set(PinCapability(DigitalInput, 1), PinCapability(DigitalOutput, 1), PinCapability(AnalogInput, 10), PinCapability(I2C, 1)))))
   }
 
   it should "deserializer AnalogMappingResponse" in {

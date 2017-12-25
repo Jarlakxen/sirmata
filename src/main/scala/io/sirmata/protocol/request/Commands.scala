@@ -9,23 +9,21 @@ trait Commands {
 
   sealed trait CommandRequest
 
-  sealed trait CommandReplayableRequest extends CommandRequest
-
   /**
    * This message requests firmware version of a Firmata device.
    */
-  case class RequestFirmware() extends CommandReplayableRequest
+  case object RequestFirmware extends CommandRequest
   /**
    * This message requests capability repot of a Firmata device.
    */
-  case class RequestCapability() extends CommandReplayableRequest
+  case object RequestCapability extends CommandRequest
   /**
    * The analog mapping query provides the information about which pins (as
    * used with Firmata's pin mode message) correspond to the analog channels.
    */
-  case class RequestAnalogMapping() extends CommandReplayableRequest
+  case object RequestAnalogMapping extends CommandRequest
 
-  case class RequestPinState() extends CommandReplayableRequest
+  case class RequestPinState(pin: Short) extends CommandRequest
 
   /**
    * The sampling interval sets how often analog data and i2c data is reported
@@ -38,18 +36,12 @@ trait Commands {
 
   case class GetSamplingInterval()
 
-  case class SetPinMode(pin: Short, mode: PinMode) extends CommandRequest {
-    import SetPinMode._
-    private[this] lazy val findPin: List[Pin] => List[Pin] = { pins =>
-      val index = pins.indexWhere(_.index == pin)
-      pins.updated(index, pins(index).copy(currentMode = mode))
-    }
-  }
+  case class SetPinMode(pin: Short, mode: PinMode) extends CommandRequest
 
   case class DigitalWrite(pin: Short, value: PinValue) extends CommandRequest
 
   case class SetPinValue(pin: Short, value: PinValue) extends CommandRequest
 
-  case class ResetFirmware() extends CommandRequest
+  case object ResetFirmware extends CommandRequest
 
 }

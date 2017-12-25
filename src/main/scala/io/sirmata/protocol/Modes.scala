@@ -1,33 +1,43 @@
 package io.sirmata.protocol
 
-import enumeratum._
-
 object Modes extends Modes
 
 trait Modes {
-  
-  sealed class PinMode(value: Byte) extends EnumEntry {
-    def toByte = value
-  }
 
-  object PinMode extends Enum[PinMode] {
+  sealed class PinMode(val byteValue: Byte)
 
-    val values = findValues
+  object PinMode {
 
-    def withByteValue(value: Byte) = values.find { _.toByte == value } getOrElse (throw new NoSuchElementException(s"Invalid PinMode 0x${value.toHexString.toUpperCase}"))
+    val values = List(
+      DigitalInput,
+      DigitalOutput,
+      AnalogInput,
+      PWM,
+      Servo,
+      Shift,
+      I2C,
+      Onewire,
+      Stepper,
+      Encoder,
+      Serial,
+      InputPullUp,
+      Ignore,
+      Unkown)
+
+    def of(value: Byte) = values.find { _.byteValue == value } getOrElse (throw new NoSuchElementException(s"Invalid PinMode 0x${value.toHexString.toUpperCase}"))
 
     /**
      * Digital pin in input mode
      */
-    case object Input extends PinMode(0x00)
+    case object DigitalInput extends PinMode(0x00)
     /**
      * Digital pin in output mode
      */
-    case object Output extends PinMode(0x01)
+    case object DigitalOutput extends PinMode(0x01)
     /**
      * Analog pin in analog input mode
      */
-    case object Analog extends PinMode(0x02)
+    case object AnalogInput extends PinMode(0x02)
     /**
      * Digital pin in PWM output mode
      */
@@ -53,9 +63,17 @@ trait Modes {
      */
     case object Stepper extends PinMode(0x08)
     /**
+     * Stepper setup
+     */
+    case object Encoder extends PinMode(0x09)
+    /**
      * Serial setup
      */
     case object Serial extends PinMode(0x0A)
+    /**
+     * Ignore setup
+     */
+    case object InputPullUp extends PinMode(0x0B)
     /**
      * Ignore setup
      */
@@ -67,41 +85,34 @@ trait Modes {
 
   }
 
-  sealed class PinValue(value: Byte) extends EnumEntry {
-    def toByte = value
-  }
+  sealed class PinValue(val byteValue: Byte)
 
-  object PinValue extends Enum[PinValue] {
-
-    val values = findValues
+  object PinValue {
 
     case object High extends PinValue(0x01)
     case object Low extends PinValue(0x00)
+
+    val values = List(High, Low)
   }
 
-  sealed class I2CMode(value: Byte) extends EnumEntry {
-    def toByte = value
-  }
+  sealed class I2CMode(val byteValue: Byte)
 
-  object I2CMode extends Enum[I2CMode] {
-
-    val values = findValues
-
+  object I2CMode {
     case object Write extends I2CMode(0x00)
     case object Read extends I2CMode(0x01)
     case object ContinuousRead extends I2CMode(0x02)
     case object StopReading extends I2CMode(0x03)
+
+    val values = List(Write, Read, ContinuousRead, StopReading)
   }
 
-  sealed class SerialMode(value: Byte) extends EnumEntry {
-    def toByte = value
-  }
+  sealed class SerialMode(val byteValue: Byte)
 
-  object SerialMode extends Enum[SerialMode] {
-
-    val values = findValues
+  object SerialMode {
 
     case object ContinuousRead extends SerialMode(0x00)
     case object StopReading extends SerialMode(0x01)
+
+    val values = List(ContinuousRead, StopReading)
   }
 }

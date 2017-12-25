@@ -1,5 +1,9 @@
 package io.sirmata.protocol
 
+import scodec.Codec
+import scodec.bits._
+import scodec.codecs.literals._
+
 /**
  * Set of constants that represent tokens of Firmata protocol.<br/>
  */
@@ -11,6 +15,8 @@ private[protocol] trait MessageTypesTokens {
   /**
    * send data for a digital pin
    */
+
+  val DigitalMessage2: Codec[Unit] = hex"90"
   val DigitalMessage = 0x90.toByte
 
   /**
@@ -59,7 +65,6 @@ private[protocol] trait MessageTypesTokens {
   val EndSysSex = 0xF7.toByte
 
 }
-
 
 // Extended command set using sysex (0-127/0x00-0x7F)
 /* 0x00-0x0F reserved for user-defined commands */

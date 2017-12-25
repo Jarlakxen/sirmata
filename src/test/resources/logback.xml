@@ -5,9 +5,7 @@
 	  </encoder>
 	</appender>
 	
-	<logger name="com.github.jarlakxen.reactive" level="DEBUG" />
-
-	<root level="DEBUG">
+	<root level="TRACE">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

@@ -19,17 +19,35 @@ class ResponseDeserializerStage extends GraphStage[FlowShape[ByteString, Command
 
   override def createLogic(attr: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) {
+      override def preStart(): Unit = {
+        setKeepGoing(true)
+      }
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
           process(grab(in)) match {
-            case Some(cmd) => push(out, cmd)
-            case None => pull(in)
+            case Some(cmd) =>
+              log.trace(s"Deserialized $cmd")
+              push(out, cmd)
+            case None =>
+              pull(in)
           }
+        }
+        override def onUpstreamFinish(): Unit = {
+          log.warn("ResponseDeserializerStage.in Finish")
+          // super.onUpstreamFinish()
+        }
+        override def onUpstreamFailure(ex: Throwable): Unit = {
+          log.error("ResponseDeserializerStage.in failed", ex)
+          super.onUpstreamFailure(ex)
         }
       })
       setHandler(out, new OutHandler {
         override def onPull(): Unit = {
           pull(in)
+        }
+        override def onDownstreamFinish(): Unit = {
+          log.warn("ResponseDeserializerStage.out Finish")
+          // super.onDownstreamFinish()
         }
       })
     }
