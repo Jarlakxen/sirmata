@@ -46,6 +46,7 @@ val akkaV             = "2.5.8"
 val akkaSerialStreamV = "4.1.2"
 val configsV          = "0.4.4"
 val scodecV           = "1.10.3"
+val scodecAkkaV       = "0.3.0"
 val slf4JV            = "1.7.25"
 val logbackV          = "1.2.3"
 val catsV             = "1.0.0-RC2"
@@ -62,6 +63,7 @@ libraryDependencies ++= Seq(
   "ch.jodersky"                   %% "akka-serial-stream"                 % akkaSerialStreamV,
   // --- Utils ---
   "org.scodec"                    %% "scodec-core"                        % scodecV,
+  "org.scodec"                    %% "scodec-akka"                        % scodecAkkaV,
   "com.github.kxbmap"             %% "configs"                            % configsV,  
   // --- Logger ---
   "org.slf4j"                     %  "slf4j-api"                          % slf4JV,

@@ -5,10 +5,12 @@ import akka.util.ByteString
 import io.sirmata._
 import io.sirmata.protocol.Modes._
 import io.sirmata.protocol.Tokens
+import scodec.bits._
+import scodec.interop.akka._
 
 trait Serializer {
   self: Commands =>
-    
+
   type CommandSerializer[CMD <: CommandRequest] = (Firmata.Context, CMD) => ByteString
 
   implicit val CommandRequestToBytes: CommandSerializer[CommandRequest] =
@@ -25,29 +27,20 @@ trait Serializer {
     }
 
   implicit val RequestFirmwareToBytes: CommandSerializer[RequestFirmware.type] =
-    (_, _) => ByteString(
-      Tokens.StartSysSex,
-      Tokens.ReportFirmware,
-      Tokens.EndSysSex)
+    (_, _) =>
+      (Tokens.StartSysSex ++ Tokens.ReportFirmware ++ Tokens.EndSysSex).toByteString
 
   implicit val RequestCapabilityToBytes: CommandSerializer[RequestCapability.type] =
-    (_, _) => ByteString(
-      Tokens.StartSysSex,
-      Tokens.CapabilityQuery,
-      Tokens.EndSysSex)
+    (_, _) =>
+      (Tokens.StartSysSex ++ Tokens.CapabilityQuery ++ Tokens.EndSysSex).toByteString
 
   implicit val RequestAnalogMappingToBytes: CommandSerializer[RequestAnalogMapping.type] =
-    (_, _) => ByteString(
-      Tokens.StartSysSex,
-      Tokens.AnalogMappingQuery,
-      Tokens.EndSysSex)
+    (_, _) =>
+      (Tokens.StartSysSex ++ Tokens.AnalogMappingQuery ++ Tokens.EndSysSex).toByteString
 
   implicit val RequestPinStateToBytes: CommandSerializer[RequestPinState] =
-    (_, cmd) => ByteString(
-      Tokens.StartSysSex,
-      Tokens.PinStateQuery,
-      cmd.pin.byteValue,
-      Tokens.EndSysSex)
+    (_, cmd) =>
+      (Tokens.StartSysSex ++ Tokens.PinStateQuery ++ ByteVector(cmd.pin.toByte) ++ Tokens.EndSysSex).toByteString
 
   implicit val SetSamplingIntervalToBytes: CommandSerializer[SetSamplingInterval] =
     (_, cmd) => ByteString(
